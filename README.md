@@ -1,11 +1,11 @@
 # PKEET-VPG
-Pure go implementation for Public Encryption with Equality Test and Verifiable Public Generator (PKEET-VPG).
+Pure Go implementation for Public Encryption with Equality Test and Verifiable Public Generator (PKEET-VPG).
 
 ## Usage
 
 ### Benchmark for PKEET-VPG
 
-All the codes are tested on both Mac and Ubuntu platforms with go1.24.
+All the codes are tested on both Mac and Ubuntu platforms with Go1.24.
 
 - Mac Studio (M1 Max, 64GB RAM, macOS 15.0)
 
@@ -17,12 +17,13 @@ To test the cost for record tracing with different sizes, run the function `Batc
 
 ### Comparison with other schemes
 
-We also implemented several related schemes and compare the communication and computation cost with our scheme, including:
+We also implemented several related schemes and compared the communication and computation cost with our scheme, including:
 - Hades[^1]
 - Sanitize[^2]
 - SCN2022[^3]
 - ElGamal[^4]
 
+The Codes are in the `Comp` folder.
 
 
 ## Warning
