@@ -217,7 +217,7 @@ func traceSanitizeTest(n, total int) []time.Duration {
 }
 
 func BatchTraceSanitizeTest() {
-	iterations := 1
+	iterations := 50
 
 	total := 1000
 

@@ -158,7 +158,7 @@ func traceEphemerTest(n, total int) []time.Duration {
 }
 
 func BatchTraceEphemerTest() {
-	iterations := 20
+	iterations := 50
 
 	total := 1000
 

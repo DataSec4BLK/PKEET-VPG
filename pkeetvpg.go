@@ -505,7 +505,7 @@ func TestET(n int) time.Duration {
 
 // BasicTest test the execution time for each component for PKEET-VPG
 func BasicTest() {
-	iterations := 1
+	iterations := 50
 	times := testPkeetVPG(iterations)
 	var avg [5]time.Duration
 

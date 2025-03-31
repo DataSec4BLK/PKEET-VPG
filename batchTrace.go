@@ -146,8 +146,7 @@ func testTrace(n int, avg, total, frequency uint64) []time.Duration {
 
 // BatchTraceTest test the cost for record tracing
 func BatchTraceTest() {
-	iterations := 5
-	// iterations := 50
+	iterations := 50
 
 	avg := uint64(4)
 	total := uint64(1000)

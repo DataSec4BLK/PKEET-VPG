@@ -157,7 +157,7 @@ func traceElGamalTest(n, total int) []time.Duration {
 }
 
 func BatchTraceElGamalTest() {
-	iterations := 10
+	iterations := 50
 
 	total := 10000
 
