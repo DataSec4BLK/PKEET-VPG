@@ -4,8 +4,6 @@ github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM
 github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
 github.com/consensys/bavard v0.1.29 h1:fobxIYksIQ+ZSrTJUuQgu+HIJwclrAPcdXqd7H2hh1k=
 github.com/consensys/bavard v0.1.29/go.mod h1:k/zVjHHC4B+PQy1Pg7fgvG3ALicQw540Crag8qx+dZs=
-github.com/consensys/gnark v0.12.0 h1:XgQ1kh2R6fHuf5fBYl+i7TxR+QTbGQuZaaqqkk5nLO0=
-github.com/consensys/gnark v0.12.0/go.mod h1:WDvuIQ8qrRvWT9NhTrib84WeLVBSGhSTrbQBXs1yR5w=
 github.com/consensys/gnark v0.12.1-0.20250228122530-d2fa6c33bb0e h1:OD1lj4fIEiUZbpwQ/w1W6XCkwYQFzqpkdgULqbfcj0Q=
 github.com/consensys/gnark v0.12.1-0.20250228122530-d2fa6c33bb0e/go.mod h1:x171T3JQ7aJs2SrrAmfu/qVvVltMhlLfnS5gS0owjtI=
 github.com/consensys/gnark-crypto v0.16.1-0.20250301001001-d2fa915f3fc7 h1:jXqjvGV/JJdfglI5vVH97ca/ZGvFsG81U1asguvEoCQ=
@@ -55,8 +53,6 @@ github.com/x448/float16 v0.8.4 h1:qLwI1I70+NjRFUR3zs1JPUCgaCXSh3SW62uAKT1mSBM=
 github.com/x448/float16 v0.8.4/go.mod h1:14CWIYCyZA/cWjXOioeEpHeN/83MdbZDRQHoFcYsOfg=
 golang.org/x/crypto v0.35.0 h1:b15kiHdrGCHrP6LvwaQ3c03kgNhhiMgvlhxHQhmg2Xs=
 golang.org/x/crypto v0.35.0/go.mod h1:dy7dXNW32cAb/6/PRuTNsix8T+vJAqvuIy5Bli/x0YQ=
-golang.org/x/exp v0.0.0-20250228200357-dead58393ab7 h1:aWwlzYV971S4BXRS9AmqwDLAD85ouC6X+pocatKY58c=
-golang.org/x/exp v0.0.0-20250228200357-dead58393ab7/go.mod h1:BHOTPb3L19zxehTsLoJXVaTktb06DFgmdW6Wb9s8jqk=
 golang.org/x/sync v0.11.0 h1:GGz8+XQP4FvTTrjZPzNKTMFtSXH80RAzG+5ghFPgK9w=
 golang.org/x/sync v0.11.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
 golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

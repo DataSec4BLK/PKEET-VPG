@@ -63,11 +63,11 @@ func randomUVK() ([]bn254.G1Affine, error) {
 	return uvk, nil
 }
 
-func generateRecords(uvk UVK, total int) ([]UVK, error) {
+func generateRecords(uvk UVK, total, rate int) ([]UVK, error) {
 	groups := make([]UVK, total)
 	for i := 0; i < total; i++ {
 		var cont UVK
-		num, err := rand.Int(rand.Reader, big.NewInt(5))
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
@@ -112,7 +112,7 @@ func traceSP(groups []UVK, utk bn254.G2Affine) ([]int, error) {
 	return match, nil
 }
 
-func traceEphemerTest(n, total int) []time.Duration {
+func traceEphemerTest(n, total, rate int) []time.Duration {
 	order := fr.Modulus()
 	_, _, _, G2 := bn254.Generators()
 
@@ -140,7 +140,7 @@ func traceEphemerTest(n, total int) []time.Duration {
 	times := make([]time.Duration, 2)
 	for i := 0; i < n; i++ {
 		start := time.Now()
-		groups, err := generateRecords(ep.uvk, total)
+		groups, err := generateRecords(ep.uvk, total, rate)
 		if err != nil {
 			panic(err)
 		}
@@ -157,16 +157,12 @@ func traceEphemerTest(n, total int) []time.Duration {
 	return times
 }
 
-func BatchTraceEphemerTest() {
-	iterations := 50
-
-	total := 1000
-
+func BatchTraceEphemerTest(iterations, total, rate int) {
 	fmt.Println("BatchTraceEphemerTest Start:")
 	fmt.Println("	iteration:	", iterations)
 	fmt.Println("	total:		", total)
 
-	times := traceEphemerTest(iterations, total)
+	times := traceEphemerTest(iterations, total, rate)
 	var avgT [2]time.Duration
 
 	avgT[0] = times[0] / time.Duration(iterations)
@@ -177,5 +173,10 @@ func BatchTraceEphemerTest() {
 }
 
 func main() {
-	BatchTraceEphemerTest()
+	iterations := 20
+	total := []int{1000, 5000, 10000, 50000, 100000}
+	rate := 100
+	for i := 0; i < len(total); i++ {
+		BatchTraceEphemerTest(iterations, total[i], rate)
+	}
 }

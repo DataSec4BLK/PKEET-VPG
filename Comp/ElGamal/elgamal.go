@@ -46,11 +46,11 @@ func RandomPoint() (twistededwards.PointAffine, error) {
 	return res, nil
 }
 
-func GenerateRecords(m, pk *twistededwards.PointAffine, total int) ([]ElGamal, error) {
+func GenerateRecords(m, pk *twistededwards.PointAffine, total, rate int) ([]ElGamal, error) {
 	groups := make([]ElGamal, total)
 	for i := 0; i < total; i++ {
 		var el ElGamal
-		num, err := rand.Int(rand.Reader, big.NewInt(5))
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
@@ -71,9 +71,16 @@ func GenerateRecords(m, pk *twistededwards.PointAffine, total int) ([]ElGamal, e
 	return groups, nil
 }
 
-func traceR1(m, pk *twistededwards.PointAffine) (ElGamal, error) {
+func traceR1(ct *ElGamal, sk *big.Int, pk *twistededwards.PointAffine) (ElGamal, error) {
+	m, err := ct.Dec(sk)
+	if err != nil {
+		panic(err)
+	}
 	var el ElGamal
-	err := el.Enc(m, pk)
+	err = el.Enc(&m, pk)
+	if err != nil {
+		panic(err)
+	}
 	return el, err
 }
 
@@ -105,7 +112,7 @@ func traceR2(res []ElGamal, sk *big.Int) ([]int, error) {
 	return match, nil
 }
 
-func traceElGamalTest(n, total int) []time.Duration {
+func traceElGamalTest(n, total, rate int) []time.Duration {
 	curve := twistededwards.GetEdwardsCurve()
 	m, err := RandomPoint()
 	if err != nil {
@@ -117,11 +124,16 @@ func traceElGamalTest(n, total int) []time.Duration {
 	}
 	var pk twistededwards.PointAffine
 	pk.ScalarMultiplication(&curve.Base, sk)
-	times := make([]time.Duration, 4)
+	var el ElGamal
+	err = el.Enc(&m, &pk)
+	if err != nil {
+		panic(err)
+	}
 
+	times := make([]time.Duration, 4)
 	for i := 0; i < n; i++ {
 		start := time.Now()
-		groups, err := GenerateRecords(&m, &pk, total)
+		groups, err := GenerateRecords(&m, &pk, total, rate)
 		if err != nil {
 			panic(err)
 		}
@@ -129,7 +141,7 @@ func traceElGamalTest(n, total int) []time.Duration {
 		times[0] += elapsed
 
 		start = time.Now()
-		mt, err := traceR1(&m, &pk)
+		mt, err := traceR1(&el, sk, &pk)
 		if err != nil {
 			panic(err)
 		}
@@ -156,16 +168,12 @@ func traceElGamalTest(n, total int) []time.Duration {
 	return times
 }
 
-func BatchTraceElGamalTest() {
-	iterations := 50
-
-	total := 10000
-
+func BatchTraceElGamalTest(iterations, total, rate int) {
 	fmt.Println("BatchTraceElGamalTest Start:")
 	fmt.Println("	iteration:	", iterations)
 	fmt.Println("	total:		", total)
 
-	times := traceElGamalTest(iterations, total)
+	times := traceElGamalTest(iterations, total, rate)
 	var avgT [4]time.Duration
 
 	avgT[0] = times[0] / time.Duration(iterations)
@@ -183,7 +191,10 @@ func BatchTraceElGamalTest() {
 }
 
 func main() {
-	//var One twistededwards.PointAffine
-	//One.SetBytes([12436184717236109307 3962172157175319849 7381016538464732718 1011752739694698287])
-	BatchTraceElGamalTest()
+	iterations := 20
+	total := []int{1000, 5000, 10000, 50000, 100000}
+	rate := 100
+	for i := 0; i < len(total); i++ {
+		BatchTraceElGamalTest(iterations, total[i], rate)
+	}
 }

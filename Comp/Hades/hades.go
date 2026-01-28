@@ -52,16 +52,16 @@ type auditString struct {
 	KG twistededwards.PointAffine
 }
 
-func GenerateRecords(total, w int, beta *big.Int) ([]auditString, error) {
+func GenerateRecords(total, window, rate int, beta *big.Int) ([]auditString, error) {
 	curve := twistededwards.GetEdwardsCurve()
 	hFunc := hash.MIMC_BN254.New()
 	ads := make([]auditString, total)
 	for i := 0; i < total; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(10))
+		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
-		nonce, _ := rand.Int(rand.Reader, big.NewInt(int64(w+i)))
+		nonce, _ := rand.Int(rand.Reader, big.NewInt(int64(window+i)))
 		var ho *big.Int
 		hFunc.Reset()
 		if num.Cmp(big.NewInt(1)) == 0 {
@@ -111,21 +111,21 @@ func traceR(res []auditString, beta *big.Int, w int) ([]int, error) {
 	return set.Elements(), nil
 }
 
-func traceHadesTest(n, total, w int) []time.Duration {
+func traceHadesTest(n, total, window, rate int) []time.Duration {
 	curve := twistededwards.GetEdwardsCurve()
 	beta, _ := rand.Int(rand.Reader, &curve.Order)
 
 	times := make([]time.Duration, 2)
 	for i := 0; i < n; i++ {
 		start := time.Now()
-		ads, err := GenerateRecords(total, w, beta)
+		ads, err := GenerateRecords(total, window, rate, beta)
 		if err != nil {
 			panic(err)
 		}
 		times[0] += time.Since(start)
 
 		start = time.Now()
-		res, err := traceR(ads, beta, w)
+		res, err := traceR(ads, beta, window)
 		if err != nil {
 			panic(err)
 		}
@@ -135,17 +135,12 @@ func traceHadesTest(n, total, w int) []time.Duration {
 	return times
 }
 
-func BatchTraceHadesTest() {
-	iterations := 50
-
-	total := 1000
-	w := 100
-
+func BatchTraceHadesTest(iterations, total, window, rate int) {
 	fmt.Println("BatchTraceHadesTest Start:")
 	fmt.Println("	iteration:	", iterations)
 	fmt.Println("	total:		", total)
 
-	times := traceHadesTest(iterations, total, w)
+	times := traceHadesTest(iterations, total, window, rate)
 	var avgT [2]time.Duration
 
 	avgT[0] = times[0] / time.Duration(iterations)
@@ -156,30 +151,11 @@ func BatchTraceHadesTest() {
 }
 
 func main() {
-	BatchTraceHadesTest()
-
-	//curve := twistededwards.GetEdwardsCurve()
-	//set := NewSet[auditString]()
-	//ads := auditString{KG: twistededwards.PointAffine{curve.Base.X, curve.Base.Y}}
-	//set.Add(ads)
-	////set.Add(2)
-	//rNum, _ := rand.Int(rand.Reader, &curve.Order)
-	//var index twistededwards.PointAffine
-	//index.ScalarMultiplication(&curve.Base, rNum)
-	//ads2 := auditString{KG: twistededwards.PointAffine{index.X, index.Y}}
-	//set.Add(ads2)
-	////set.Add(3)
-	//rNum3, _ := rand.Int(rand.Reader, &curve.Order)
-	//var index3 twistededwards.PointAffine
-	//index3.ScalarMultiplication(&curve.Base, rNum3)
-	//ads3 := auditString{KG: twistededwards.PointAffine{index3.X, index3.Y}}
-	//set.Add(ads3)
-	//
-	//fmt.Println("Set contains 2?", set.Contains(ads)) // true
-	//fmt.Println("Set size:", set.Size())              // 3
-	//
-	//set.Remove(ads2)
-	//fmt.Println("Set contains 2?", set.Contains(ads2)) // false
-	//
-	//fmt.Println("All elements:", set.Elements()) // [1 3]
+	iterations := 20
+	total := []int{1000, 5000, 10000, 50000, 100000}
+	window := 100
+	rate := 100
+	for i := 0; i < len(total); i++ {
+		BatchTraceHadesTest(iterations, total[i], window, rate)
+	}
 }
