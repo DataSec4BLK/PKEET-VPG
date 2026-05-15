@@ -3,8 +3,8 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/consensys/gnark-crypto/ecc/bn254"
-	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	"github.com/consensys/gnark-crypto/ecc/bls12-381"
+	"github.com/consensys/gnark-crypto/ecc/bls12-381/fr"
 	"math/big"
 	"time"
 )
@@ -12,48 +12,48 @@ import (
 type EphemerID struct {
 	usk big.Int
 	uvk UVK
-	utk bn254.G2Affine
+	utk bls12381.G2Affine
 }
 
 type UVK struct {
-	tau [3]bn254.G1Affine
+	tau [3]bls12381.G1Affine
 }
 
 type AffinePair struct {
-	AG1 bn254.G1Affine
-	AG2 bn254.G2Affine
+	AG1 bls12381.G1Affine
+	AG2 bls12381.G2Affine
 }
 
 func (ap *AffinePair) test(ap1 *AffinePair) bool {
-	res, _ := bn254.Pair([]bn254.G1Affine{ap.AG1}, []bn254.G2Affine{ap.AG2})
-	res1, _ := bn254.Pair([]bn254.G1Affine{ap1.AG1}, []bn254.G2Affine{ap1.AG2})
+	res, _ := bls12381.Pair([]bls12381.G1Affine{ap.AG1}, []bls12381.G2Affine{ap.AG2})
+	res1, _ := bls12381.Pair([]bls12381.G1Affine{ap1.AG1}, []bls12381.G2Affine{ap1.AG2})
 	if res.Equal(&res1) {
 		return true
 	}
 	return false
 }
 
-func randomG1() (bn254.G1Affine, error) {
-	var rG1 bn254.G1Affine
-	_, _, G1, _ := bn254.Generators()
+func randomG1() (bls12381.G1Affine, error) {
+	var rG1 bls12381.G1Affine
+	_, _, G1, _ := bls12381.Generators()
 	order := fr.Modulus()
 	u, err := rand.Int(rand.Reader, order)
 	if err != nil {
-		return bn254.G1Affine{}, err
+		return bls12381.G1Affine{}, err
 	}
 	rG1.ScalarMultiplication(&G1, u)
 	return rG1, nil
 }
 
-func randomUVK() ([]bn254.G1Affine, error) {
-	uvk := make([]bn254.G1Affine, 3)
+func randomUVK() ([]bls12381.G1Affine, error) {
+	uvk := make([]bls12381.G1Affine, 3)
 	order := fr.Modulus()
 	_sk, err := rand.Int(rand.Reader, order)
 	if err != nil {
 		return uvk, err
 	}
 	h, _ := randomG1()
-	var h1, h2 bn254.G1Affine
+	var h1, h2 bls12381.G1Affine
 	h1.ScalarMultiplication(&h, _sk)
 	h2.ScalarMultiplication(&h, _sk)
 	h2.ScalarMultiplication(&h2, _sk)
@@ -65,14 +65,15 @@ func randomUVK() ([]bn254.G1Affine, error) {
 
 func generateRecords(uvk UVK, total, rate int) ([]UVK, error) {
 	groups := make([]UVK, total)
+	one := big.NewInt(1)
 	for i := 0; i < total; i++ {
 		var cont UVK
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
-		if num.Cmp(big.NewInt(1)) == 0 {
-			var h, h1, h2 bn254.G1Affine
+		if num.Cmp(one) == 0 {
+			var h, h1, h2 bls12381.G1Affine
 			v, _ := rand.Int(rand.Reader, fr.Modulus())
 			h.ScalarMultiplication(&uvk.tau[0], v)
 			h1.ScalarMultiplication(&uvk.tau[1], v)
@@ -92,8 +93,8 @@ func generateRecords(uvk UVK, total, rate int) ([]UVK, error) {
 	return groups, nil
 }
 
-func traceSP(groups []UVK, utk bn254.G2Affine) ([]int, error) {
-	_, _, _, G2 := bn254.Generators()
+func traceSP(groups []UVK, utk bls12381.G2Affine) ([]int, error) {
+	_, _, _, G2 := bls12381.Generators()
 	var match []int
 	for i := 0; i < len(groups); i++ {
 		var ap1, ap2, ap3, ap4 AffinePair
@@ -114,7 +115,7 @@ func traceSP(groups []UVK, utk bn254.G2Affine) ([]int, error) {
 
 func traceEphemerTest(n, total, rate int) []time.Duration {
 	order := fr.Modulus()
-	_, _, _, G2 := bn254.Generators()
+	_, _, _, G2 := bls12381.Generators()
 
 	var ep EphemerID
 	sk, _ := rand.Int(rand.Reader, order)
@@ -122,11 +123,11 @@ func traceEphemerTest(n, total, rate int) []time.Duration {
 	if err != nil {
 		panic(err)
 	}
-	var h1, h2 bn254.G1Affine
+	var h1, h2 bls12381.G1Affine
 	h1.ScalarMultiplication(&h, sk)
 	h2.ScalarMultiplication(&h, sk)
 	h2.ScalarMultiplication(&h2, sk)
-	var utk bn254.G2Affine
+	var utk bls12381.G2Affine
 	utk.ScalarMultiplication(&G2, sk)
 
 	ep.usk = *sk

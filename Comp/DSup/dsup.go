@@ -100,12 +100,13 @@ func getRandomG2() *bls12381.G2Affine {
 func GenerateRecords(crs *CRS, user *User, sup *Supervisor, total, rate int) ([]DSup, error) {
 	order := bls12381.ID.ScalarField()
 	groups := make([]DSup, total)
+	one := big.NewInt(1)
 	for i := 0; i < total; i++ {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
-		if num.Cmp(big.NewInt(1)) == 0 {
+		if num.Cmp(one) == 0 {
 			dsup, err := user.GenDSup(crs, sup.tpk, sup.lpk)
 			if err != nil {
 				panic(err)
@@ -216,7 +217,7 @@ func BatchTraceDSupTest(iterations, total, rate int) {
 func main() {
 	iterations := 20
 	total := []int{1000, 5000, 10000, 50000, 100000}
-	rate := 100
+	rate := 2000
 	for i := 0; i < len(total); i++ {
 		BatchTraceDSupTest(iterations, total[i], rate)
 	}

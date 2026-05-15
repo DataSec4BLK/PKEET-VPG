@@ -6,8 +6,8 @@ import (
 	"math/big"
 	"time"
 
-	_ "github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
-	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards"
+	_ "github.com/consensys/gnark-crypto/ecc/bls12-381/fr/mimc"
+	"github.com/consensys/gnark-crypto/ecc/bls12-381/twistededwards"
 	"github.com/consensys/gnark-crypto/hash"
 )
 
@@ -54,8 +54,9 @@ type auditString struct {
 
 func GenerateRecords(total, window, rate int, beta *big.Int) ([]auditString, error) {
 	curve := twistededwards.GetEdwardsCurve()
-	hFunc := hash.MIMC_BN254.New()
+	hFunc := hash.MIMC_BLS12_381.New()
 	ads := make([]auditString, total)
+	one := big.NewInt(1)
 	for i := 0; i < total; i++ {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
@@ -64,7 +65,7 @@ func GenerateRecords(total, window, rate int, beta *big.Int) ([]auditString, err
 		nonce, _ := rand.Int(rand.Reader, big.NewInt(int64(window+i)))
 		var ho *big.Int
 		hFunc.Reset()
-		if num.Cmp(big.NewInt(1)) == 0 {
+		if num.Cmp(one) == 0 {
 			content := append(beta.Bytes(), nonce.Bytes()...)
 			hFunc.Write(content)
 			hOut := hFunc.Sum(nil)
@@ -88,7 +89,7 @@ func traceR(res []auditString, beta *big.Int, w int) ([]int, error) {
 	var L []auditString
 	set := NewSet[int]()
 	interval := w + len(res)
-	hFunc := hash.MIMC_BN254.New()
+	hFunc := hash.MIMC_BLS12_381.New()
 	for i := 0; i < interval; i++ {
 		hFunc.Reset()
 		content := append(beta.Bytes(), big.NewInt(int64(i)).Bytes()...)

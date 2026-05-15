@@ -235,12 +235,13 @@ func getRandomGT() *bls12381.GT {
 
 func generateRecords(para *Para, pk *PK, m *bls12381.GT, total, rate int) ([]CT, error) {
 	groups := make([]CT, total)
+	one := big.NewInt(1)
 	for i := 0; i < total; i++ {
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
-		if num.Cmp(big.NewInt(1)) == 0 {
+		if num.Cmp(one) == 0 {
 			ct, err := Enc(para, pk, m)
 			if err != nil {
 				return nil, err

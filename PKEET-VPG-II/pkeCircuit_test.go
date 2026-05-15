@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
+	"fmt"
 	"github.com/consensys/gnark-crypto/ecc"
 	"github.com/consensys/gnark-crypto/ecc/bls12-381/twistededwards"
 	"github.com/consensys/gnark/backend/groth16"
 	"github.com/consensys/gnark/frontend"
 	"github.com/consensys/gnark/frontend/cs/r1cs"
+	"io"
 	"math/big"
 	"testing"
 )
@@ -88,6 +91,24 @@ func TestCircuit(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("pkeCircuit:")
+	fmt.Printf("constraints: %d\n", ccs.GetNbConstraints())
+	fmt.Printf("secret variables: %d\n", ccs.GetNbSecretVariables())
+	fmt.Printf("public variables: %d\n", ccs.GetNbPublicVariables())
+	fmt.Printf("internal variables: %d\n", ccs.GetNbInternalVariables())
+
+	fmt.Printf("spk: %d\n", getSize(spk))
+	fmt.Printf("svk: %d\n", getSize(svk))
+}
+
+func getSize(obj io.WriterTo) int64 {
+	var buf bytes.Buffer
+	n, err := obj.WriteTo(&buf)
+	if err != nil {
+		panic(err)
+	}
+	return n
 }
 
 func BenchmarkCircuitSetup(b *testing.B) {

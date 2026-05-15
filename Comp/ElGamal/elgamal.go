@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/consensys/gnark-crypto/ecc/bn254/twistededwards"
+	"github.com/consensys/gnark-crypto/ecc/bls12-381/twistededwards"
 	"math/big"
 	"time"
 )
@@ -48,13 +48,14 @@ func RandomPoint() (twistededwards.PointAffine, error) {
 
 func GenerateRecords(m, pk *twistededwards.PointAffine, total, rate int) ([]ElGamal, error) {
 	groups := make([]ElGamal, total)
+	one := big.NewInt(1)
 	for i := 0; i < total; i++ {
 		var el ElGamal
 		num, err := rand.Int(rand.Reader, big.NewInt(int64(rate)))
 		if err != nil {
 			panic(err)
 		}
-		if num.Cmp(big.NewInt(1)) == 0 {
+		if num.Cmp(one) == 0 {
 			err := el.Enc(m, pk)
 			if err != nil {
 				return nil, err
