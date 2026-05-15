@@ -1,11 +1,11 @@
-# PKEET-VPG
-Pure Go implementation for Public Encryption with Equality Test and Verifiable Public Generator (PKEET-VPG).
+# Verifiable PKEET-VPG (VPV)
+Pure Go implementation for Verifiable Public Encryption with Equality Test and Verifiable Public Generator (Verifiable PKEET-VPG).
 
 ## Usage
 
-### Benchmark for PKEET-VPG
+### Benchmark for VPV
 
-All the codes are tested on both Mac and Ubuntu platforms with Go1.24.
+All the codes are tested on both Mac and Ubuntu platforms with Go1.24.0.
 
 - Mac Studio (M1 Max, 64GB RAM, macOS 15.0)
 
@@ -19,10 +19,10 @@ To test the cost for record retrieval with different hyperparameters, run the fu
 
 We also implemented several related schemes and compared the communication and computation cost with our scheme, including:
 - Hades[^1]
-- SCN2022[^2]
-- ElGamal[^3]
+- EPM[^2]
+- ELG[^3]
 - DSup[^4]
-- PKEOET[^5]
+- PKE-OET[^5]
 
 The Codes are in the `Comp` folder.
 
